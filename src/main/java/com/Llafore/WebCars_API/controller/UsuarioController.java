@@ -33,12 +33,16 @@ public class UsuarioController  {
 //    }
 
     @PostMapping("/api/usuario/login")
-    public Usuario fazerLogin(@RequestBody Usuario entity){
+    public ResponseEntity<Usuario> fazerLogin(@RequestBody Usuario entity){
         Optional<Usuario> retorno = repository.login(entity.getEmail(), entity.getSenha());
         if(retorno.isPresent()){
-            return retorno.get();
+            if(retorno.get().getSenha().equals(entity.getSenha())){
+                return ResponseEntity.ok(retorno.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            }
         } else {
-            return null;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
